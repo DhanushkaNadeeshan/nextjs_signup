@@ -23,35 +23,52 @@ const encryptPassword = (password) => {
     })
 
 }
+
 export default async function signin(req, res) {
 
     const { method } = req;
 
-    switch (method) {
+    return new Promise(async (resolve,reject)=>{
 
-        case 'POST':
-            const { body } = req;
-            // encription password
-            body.password = await encryptPassword(body.password).catch(err => console.error(err));
-
-            if (body.password != 'fail') {
-
-                insert(body, 'users').then(result => {
-                    // TODO: check user is available
-                    res.status(200).json({ msg: 'success', insertedId: result.insertedId, ...body });
-                }).catch(err => {
-                    console.error(err)
-                    res.status(400).json({ msg: 'fail' });
-                })
-
-            } else {
-                res.status(200).json({ msg: 'fail', error: "password encryption faild" });
+            switch (method) {
+        
+                case 'POST':
+    
+                    const { body } = req;
+                    // encription password
+                    body.password = await encryptPassword(body.password).catch(err => console.error(err));
+        
+                    if (body.password != 'fail') {
+                        // insert user data
+                        insert(body, 'users').then(result => {
+                            // TODO: check user is available
+    
+                            // remove password
+                            delete body.password;
+                            // return data
+                            res.status(200).json({ status: 'success', insertedId: result.insertedId, ...body });
+                            resolve();
+        
+                        }).catch(err => {
+    
+                            console.error(err)
+                            res.status(400).json({ status: 'fail' });
+                            resolve();
+                        })
+        
+                    } else {
+                        res.status(200).json({ status: 'fail', msg: "password encryption faild" });
+                        resolve();
+                    }
+        
+                    break;
+                default:
+                    res.status(400).json({ status: 'fail' });
+                    resolve();
+                    break;
             }
+    })
+ 
 
-            break;
-        default:
-            res.status(400).json({ msg: 'fail' });
-            break;
-    }
 
 }
