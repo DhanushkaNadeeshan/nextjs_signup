@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+import { jwtVerify } from 'jose';
 
 const withAuth = (handler) => {
 
@@ -8,17 +8,15 @@ const withAuth = (handler) => {
         // check cookie key is avilable
         if (cookies.key) {
 
-            jwt.verify(cookies.key, process.env.KEY, function (err, decoded) {
-
-                if (err) {
-                    console.log("🚀 ~ file: withAuth.js ~ line 12 ~ err", err)
-                    return res.status(405).json({ status: "fail" })
-                }
+            try {
+                await jwtVerify(cookies.key, new TextEncoder().encode(process.env.KEY));
                 handler(req, res)
-            });
+            } catch (error) {
+                return res.status(405).json({ success: false })
+            }
 
         } else {
-            return res.status(405).json({ status: "fail" })
+            return res.status(405).json({ success: false })
         }
 
     }

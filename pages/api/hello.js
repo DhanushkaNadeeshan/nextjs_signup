@@ -1,8 +1,7 @@
 import withAuth from "../../middleware/withAuth"
 
-
- function handler(req, res) {
-  res.status(200).json({ status:'success',msg: 'API is secured with authentication' })
+function handler(req, res) {
+  res.status(200).json({ success: true, msg: 'API is secured with jwt authentication' })
 }
 
 

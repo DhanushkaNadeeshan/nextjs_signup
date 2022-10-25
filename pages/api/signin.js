@@ -1,74 +1,43 @@
-import { insert } from "../../lib/db.handler";
-import bcrypt from "bcryptjs";
-
-const encryptPassword = (password) => {
-
-    return new Promise((resolve, reject) => {
-
-        bcrypt.genSalt(10, function (err, Salt) {
-
-            // The bcrypt is used for encrypting password.
-            bcrypt.hash(password, Salt, function (err, hash) {
-
-                if (err) {
-                    reject(err)
-                }
-
-                resolve(hash)
-
-
-            })
-        })
-
-    })
-
-}
+import { encryptPassword } from "../../lib/encrypt.pwd";
+import dbConnect from "../../lib/db.connect";
+import User from "/models/User";
 
 export default async function signin(req, res) {
 
     const { method } = req;
 
-    return new Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve, reject) => {
 
-            switch (method) {
-        
-                case 'POST':
-    
+        await dbConnect();
+
+        switch (method) {
+
+            case 'POST':
+
+                try {
                     const { body } = req;
-                    // encription password
-                    body.password = await encryptPassword(body.password).catch(err => console.error(err));
-        
-                    if (body.password != 'fail') {
-                        // insert user data
-                        insert(body, 'users').then(result => {
-                            // TODO: check user is available
-    
-                            // remove password
-                            delete body.password;
-                            // return data
-                            res.status(200).json({ status: 'success', insertedId: result.insertedId, ...body });
-                            resolve();
-        
-                        }).catch(err => {
-    
-                            console.error(err)
-                            res.status(400).json({ status: 'fail' });
-                            resolve();
-                        })
-        
-                    } else {
-                        res.status(200).json({ status: 'fail', msg: "password encryption faild" });
-                        resolve();
-                    }
-        
-                    break;
-                default:
-                    res.status(400).json({ status: 'fail' });
+                    const { password } = body;
+                    // replace with encrypted password
+                    body.password = await encryptPassword(password).catch(err => console.log(err));
+
+                    const userData = await User.create(body)
+
+                    res.status(200).json({ success: true, data: userData });
+
+                } catch (error) {
+                    res.status(400).json({ success: false, error });
+                } finally {
                     resolve();
-                    break;
-            }
+
+                }
+                break;
+            default:
+                res.status(400).json({ success: false });
+                resolve();
+                break;
+        }
     })
- 
+
 
 
 }

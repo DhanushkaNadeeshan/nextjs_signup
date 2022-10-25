@@ -7,10 +7,53 @@ body {
 }
 
 a {
-  color: inherit;
+  color: rgb(4, 113, 255);
   text-decoration: none;
+
 }
 
 * {
   box-sizing: border-box;
+}
+
+main {
+  width: 100%;
+  padding: 1rem;
+  text-align: center;
+}
+
+.form {
+  width: 300px;
+  margin: 5px auto;
+ 
+  display: flex;
+  justify-content:space-between;
+  /* background-color: aqua; */
+
+}
+
+.form label {
+  margin: 5px 10px ;
+}
+.ascii-art {
+  font-family: monospace;
+  white-space: pre;
+  height: 30vh;
+  background-color: aqua;
+}
+
+.footer {
+  display: flex;
+  flex: 1;
+  padding: 2rem 0;
+  border-top: 1px solid #eaeaea;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
 }

@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 
 
-export default function Home() {
+export default function SignUp() {
 
   const router = useRouter();
   const refUserName = useRef(null);
@@ -17,33 +17,18 @@ export default function Home() {
       userName: refUserName.current.value.trim(),
       password: refPassword.current.value.trim()
     }
-    fetch('/api/login', {
+    fetch('/api/signin', {
       method: "post",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     }).then((response) => response.json())
       .then((responseJson) => {
         console.log("🚀 ~ file: index.js ~ line 24 ~ .then ~ responseJson", responseJson)
-        if(responseJson.success){
-          router.push('/protect')
-        }
       })
       .catch((error) => {
         console.error(error);
       });
 
-  }
-
-  const ping = () => {
-    fetch('/api/ping').
-      then((response) => response.json()).
-      then((result) => {
-        console.log("🚀 ~ file: index.js ~ line 38 ~ then ~ result", result)
-       
-
-      }).catch(error => {
-        console.error(error);
-      })
   }
 
   return (
@@ -54,29 +39,26 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <p>Login</p>
+        <p>Sign-Up</p>
         <form onSubmit={loginHandler}>
           {/* user name */}
           <div className='form'>
             <label>User Name</label>
-            <input type="text" placeholder='User Name' required ref={refUserName} />
+            <input type="text" placeholder='User Name'  required ref={refUserName} />
           </div>
           {/* password */}
           <div className='form'>
             <label>Password</label>
-            <input type="password" placeholder="Password" required ref={refPassword} />
+            <input type="password" placeholder="Password" required  ref={refPassword}/>
           </div>
           <div className='form'>
-            <button type="button" onClick={() => router.push('/signup')}>Sign Up</button>
-            <button type='submit'>Login</button>
+            <button type="button" onClick={()=>router.push('/')}>Login</button>
+            <button type='submit'>Submit</button>
           </div>
         </form>
-
-        <button onClick={ping}>Get Cookie</button>
-        <button onClick={()=>router.push('/protect')}>Try to Go protect</button>
       </main>
       <footer className="footer">
-        <p>Made by gitportal.dev</p>
+        <p>Made by gitportal.dev comunity</p>
       </footer>
     </div>
   )
